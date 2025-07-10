@@ -1,2 +1,3 @@
 flask
 pycopg2-binary
+gunicorn
