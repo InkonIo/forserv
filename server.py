@@ -1,4 +1,3 @@
-﻿
 # -*- coding: utf-8 -*-
 import os
 from flask import Flask, request, jsonify
@@ -58,7 +57,7 @@ def receive_data():
                     # 1. Определяем временное окно для поиска существующей записи
                     # Ищем записи, которые были созданы/обновлены в течение последней минуты
                     one_minute_ago = current_time - timedelta(minutes=1)
-
+                    
                     # 2. Попытка найти последнюю запись для этого датчика в пределах временного окна
                     select_query = """
                     SELECT id FROM sensor_data
@@ -78,7 +77,8 @@ def receive_data():
                         WHERE id = %s;
                         """
                         cursor.execute(update_query, (water_percentage, current_time, record_id))
-                        print(f"Updated record ID {record_id} for Sensor ID: {sensor_id}, Water: {water_percentage}%, Timestamp: { {current_time.strftime('%Y-%m-%d %H:%M:%S')} }")
+                        # ИСПРАВЛЕНО: Убраны лишние фигурные скобки из f-строки
+                        print(f"Updated record ID {record_id} for Sensor ID: {sensor_id}, Water: {water_percentage}%, Timestamp: {current_time.strftime('%Y-%m-%d %H:%M:%S')}")
                     else:
                         # 4. Если запись не найдена (не было обновлений в последнюю минуту), вставляем новую
                         insert_query = """
@@ -86,10 +86,10 @@ def receive_data():
                         VALUES (%s, %s, %s);
                         """
                         cursor.execute(insert_query, (sensor_id, water_percentage, current_time))
-                        print(f"Inserted new record for Sensor ID: {sensor_id}, Water: {water_percentage}%, Timestamp: { {current_time.strftime('%Y-%m-%d %H:%M:%S')} }")
-
-
-conn.commit() # Подтверждаем изменения в базе данных
+                        # ИСПРАВЛЕНО: Убраны лишние фигурные скобки из f-строки
+                        print(f"Inserted new record for Sensor ID: {sensor_id}, Water: {water_percentage}%, Timestamp: {current_time.strftime('%Y-%m-%d %H:%M:%S')}")
+                    
+                    conn.commit() # Подтверждаем изменения в базе данных
                     return jsonify({"message": "Data received and processed (upserted) in DB"}), 200
 
                 except Exception as e:
